@@ -10,6 +10,30 @@ import CoreImage
 import CoreImage.CIFilterBuiltins
 import PhotosUI
 
+// // //
+struct SetColor: ViewModifier { // новая структура
+    var whatColor: Bool // передаем св- во
+    
+    func body(content: Content) -> some View {
+        content// то что будем изменять в итоге, далее все что применяем
+            .padding()
+            .background(whatColor ? .purple : . green)
+            .clipShape(Capsule())
+            .overlay(
+                Capsule().stroke(Color.black, lineWidth: 2)
+            )
+            .font(.largeTitle)
+            .padding(.top, 10)
+            .foregroundStyle(.black)
+    }
+}
+
+extension View { // расширение для вью в виде ф-ии, которую напишем через точку
+    func drowText(whatColor: Bool) -> some View {
+        modifier(SetColor(whatColor: whatColor))// ключ слово МОДИФИРЕ и в него вставляем структура модифаера и пользуемся
+    }
+}
+// // //
 struct ContentView: View {
     
     @State private var processedImage: Image? // картинка которую выберем/массив
@@ -47,16 +71,19 @@ struct ContentView: View {
                     VStack{
                         HStack {
                             Text("Intensity")
+                                .drowText(whatColor: true)
                             Slider(value: $filterIntensity) // слайдер интенсивности  , остальные слайдеры так же
                                 .onChange(of: filterIntensity, applyProcessing)
                         }
                         HStack {
                             Text("Radius")
+                                .drowText(whatColor: true)
                             Slider(value: $filterRadius, in: 0...1000)
                                 .onChange(of: filterRadius, applyProcessing)
                         }
                         HStack {
                             Text("Scale")
+                                .drowText(whatColor: false)
                             Slider(value: $filterScale, in: 0...100, step: 0.5)
                                 .onChange(of: filterScale, applyProcessing)
                         }
